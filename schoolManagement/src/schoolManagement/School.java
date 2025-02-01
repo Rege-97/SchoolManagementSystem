@@ -11,12 +11,15 @@ public class School extends Frame implements ActionListener {
 	MenuBar mbar;
 	Menu m_file, m_add, m_print, m_search;
 	MenuItem mi_close, mi_class, mi_student, mi_subject, mi_classrank, mi_allrank, mi_stusearch, mi_classsearch;
-	Button popclose, bt_ok, bt_reset;
-	Label lb_pop, lb_tnum, lb_tname, lb_sname, lb_sage, lb_saddr, lb_stel, lb_skor, lb_smat, lb_seng;
+	Button popclose, bt_ok, bt_reset, bt_print;
+	Label lb_pop, lb_tnum, lb_tname, lb_sname, lb_sage, lb_saddr, lb_stel, lb_skor, lb_smat, lb_seng, lb_title;
 	TextField tf_tnum, tf_tname, tf_sname, tf_sage, tf_saddr, tf_stel, tf_skor, tf_smat, tf_seng;
 	Dialog dialog;
 	Font f_title;
-	Panel p_empty;
+	Panel p_empty, p1, p2, p3, p4;
+	Choice c_tnum;
+	List list;
+	TextArea ta;
 
 	static String menu = "";
 
@@ -89,9 +92,9 @@ public class School extends Frame implements ActionListener {
 		m_search.add(mi_stusearch);
 		m_search.add(mi_classsearch);
 
-		Label front = new Label("학사 관리 프로그램 v3.0", Label.CENTER);
-		front.setFont(f_title);
-		this.add(front);
+		lb_title = new Label("학사 관리 프로그램 v3.0", Label.CENTER);
+		lb_title.setFont(f_title);
+		this.add(lb_title);
 
 		mi_close.addActionListener(this);
 		mi_class.addActionListener(this);
@@ -114,7 +117,7 @@ public class School extends Frame implements ActionListener {
 				studentInput();
 			} else if (ob == mi_subject) {
 				subjectInput();
-			} else if(ob==mi_classrank) {
+			} else if (ob == mi_classrank) {
 				classRank();
 			}
 
@@ -130,14 +133,19 @@ public class School extends Frame implements ActionListener {
 		menu = "classInput";
 		this.setLayout(new BorderLayout());
 
-		Panel p1 = new Panel(new FlowLayout());
+		p1 = new Panel(new FlowLayout());
 		this.add(p1, "North");
-		Label lb_title_ci = new Label("반 등록", Label.CENTER);
-		lb_title_ci.setPreferredSize(new Dimension(100, 50));
-		lb_title_ci.setFont(f_title);
-		p1.add(lb_title_ci);
+		lb_title = new Label("반 등록", Label.CENTER);
+		lb_title.setPreferredSize(new Dimension(100, 50));
+		lb_title.setFont(f_title);
+		p1.add(lb_title);
 
-		Panel p2 = new Panel(new GridLayout(5, 2, 10, 10));
+		p2 = new Panel(new GridLayout(5, 2, 10, 10)) {
+			@Override
+			public Insets getInsets() {
+				return new Insets(0, 57, 0, 57);
+			}
+		};
 		this.add(p2);
 
 		lb_tnum = new Label("배정될 반", Label.CENTER);
@@ -225,14 +233,19 @@ public class School extends Frame implements ActionListener {
 
 		this.setLayout(new BorderLayout());
 
-		Panel p1 = new Panel(new FlowLayout());
+		p1 = new Panel(new FlowLayout());
 		this.add(p1, "North");
-		Label lb_title_si = new Label("학생 등록", Label.CENTER);
-		lb_title_si.setPreferredSize(new Dimension(100, 50));
-		lb_title_si.setFont(f_title);
-		p1.add(lb_title_si);
+		lb_title = new Label("학생 등록", Label.CENTER);
+		lb_title.setPreferredSize(new Dimension(100, 50));
+		lb_title.setFont(f_title);
+		p1.add(lb_title);
 
-		Panel p2 = new Panel(new GridLayout(6, 2, 10, 10));
+		p2 = new Panel(new GridLayout(6, 2, 10, 10)) {
+			@Override
+			public Insets getInsets() {
+				return new Insets(0, 57, 0, 57);
+			}
+		};
 		this.add(p2);
 
 		lb_sname = new Label("학생 이름", Label.CENTER);
@@ -244,7 +257,7 @@ public class School extends Frame implements ActionListener {
 		lb_stel = new Label("학생 전화번호", Label.CENTER);
 		tf_stel = new TextField();
 		lb_tnum = new Label("배정 반", Label.CENTER);
-		Choice c_tnum = new Choice();
+		c_tnum = new Choice();
 
 		sql = "select tnum from teacher order by tnum";
 		PreparedStatement ps = conn.prepareStatement(sql);
@@ -340,16 +353,16 @@ public class School extends Frame implements ActionListener {
 
 		this.setLayout(new BorderLayout());
 
-		Panel p1 = new Panel(new FlowLayout());
+		p1 = new Panel(new FlowLayout());
 		this.add(p1, "North");
-		Label lb_title_sui = new Label("과목 점수 입력", Label.CENTER);
-		lb_title_sui.setPreferredSize(new Dimension(100, 50));
-		lb_title_sui.setFont(f_title);
-		p1.add(lb_title_sui);
+		lb_title = new Label("과목 점수 입력", Label.CENTER);
+		lb_title.setPreferredSize(new Dimension(100, 50));
+		lb_title.setFont(f_title);
+		p1.add(lb_title);
 
-		Panel p2 = new Panel();
+		p2 = new Panel();
 
-		List list = new List();
+		list = new List();
 		sql = "select * " + "from student st,subject sb " + "where st.snum = sb.snum and sb.savg=0 "
 				+ "order by st.snum";
 
@@ -357,9 +370,9 @@ public class School extends Frame implements ActionListener {
 		ResultSet rs = ps1.executeQuery();
 
 		Choice c_snum = new Choice();
-		TextArea ta = new TextArea();
+		ta = new TextArea();
 
-		ta.setPreferredSize(new Dimension(1145, 130));
+		ta.setPreferredSize(new Dimension(1145, 80));
 
 		while (rs.next()) {
 			snum = rs.getInt("snum");
@@ -372,25 +385,31 @@ public class School extends Frame implements ActionListener {
 					+ "\n");
 			c_snum.add(snum + "번 " + sname);
 		}
-		Panel p2_1 = new Panel(new GridLayout(1, 12));
-		p2_1.setPreferredSize(new Dimension(1145, 30));
+		p4 = new Panel(new GridLayout(1, 12));
+		p4.setPreferredSize(new Dimension(1145, 15));
 		for (int i = 1; i < 13; i++) {
 			if (i <= 7) {
 				Label lb = new Label(str[i]);
-				p2_1.add(lb);
+				p4.add(lb);
 			} else {
 				Label lb = new Label("");
-				p2_1.add(lb);
+				p4.add(lb);
 
 			}
 		}
 
-		p2.add(p2_1);
+		p2.add(p4);
 		p2.add(ta);
 
 		this.add(p2, "Center");
 
-		Panel p3 = new Panel(new GridLayout(5, 2, 10, 10));
+		p3 = new Panel(new GridLayout(5, 2, 10, 10)) {
+			@Override
+			public Insets getInsets() {
+				return new Insets(0, 57, 0, 57);
+			}
+		};
+		p3.setPreferredSize(new Dimension(1145, 180));
 		this.add(p3, "South");
 		Label lb_s = new Label("학생 선택", Label.CENTER);
 		lb_skor = new Label("국어 점수", Label.CENTER);
@@ -448,9 +467,9 @@ public class School extends Frame implements ActionListener {
 
 				}
 			});
-			
+
 			bt_reset.addActionListener(new ActionListener() {
-				
+
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					tf_skor.setText("");
@@ -462,31 +481,98 @@ public class School extends Frame implements ActionListener {
 		}
 
 	}
-	
-	public void classRank() {
+
+	public void classRank() throws Exception {
 		this.removeAll();
-		menu = "subjectInput";
+		menu = "classRank";
 
 		this.setLayout(new BorderLayout());
 
-		Panel p1 = new Panel(new FlowLayout());
+		p1 = new Panel(new FlowLayout());
 		this.add(p1, "North");
-		Label lb_title_cr = new Label("반별 석차 출력", Label.CENTER);
-		lb_title_cr.setPreferredSize(new Dimension(100, 50));
-		lb_title_cr.setFont(f_title);
-		p1.add(lb_title_cr);
+		lb_title = new Label("반별 석차 출력", Label.CENTER);
+		lb_title.setPreferredSize(new Dimension(100, 50));
+		lb_title.setFont(f_title);
+		p1.add(lb_title);
+
+		p2 = new Panel(new GridLayout(1, 3));
+
+		lb_tnum = new Label("반 선택", Label.CENTER);
+		c_tnum = new Choice();
+		bt_print = new Button("출력");
+
+		sql = "select tnum from teacher order by tnum";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ResultSet rs = ps.executeQuery();
+
+		while (rs.next()) {
+			c_tnum.add(rs.getString("tnum"));
+		}
+		p2.add(lb_tnum);
+		p2.add(c_tnum);
+		p2.add(bt_print);
+
+		p3 = new Panel();
+		ta = new TextArea();
+
+		ta.setPreferredSize(new Dimension(1250, 210));
+
+		list = new List();
+		p4 = new Panel(new GridLayout(1, 12));
+		p4.setPreferredSize(new Dimension(1250, 20));
+
+		for (int i = 0; i < 13; i++) {
+			Label lb = new Label(str[i]);
+			p4.add(lb);
+		}
+		p3.add(p2);
+		p3.add(p4);
+		p3.add(ta);
+		this.add(p3, "Center");
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		if (menu.equals("classRank")) {
+			bt_print.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					try {
+						ta.setText("");
+						int rank = 0;
+						tnum = c_tnum.getSelectedItem();
+
+						sql = "select * from student st,subject sb,teacher t "
+								+ "where st.snum=sb.snum and st.tnum=t.tnum and st.tnum=? " + "order by savg desc";
+						PreparedStatement ps = conn.prepareStatement(sql);
+						ps.setString(1, tnum);
+						ResultSet rs = ps.executeQuery();
+
+						while (rs.next()) {
+							snum = rs.getInt("snum");
+							sname = rs.getString("sname");
+							sage = rs.getInt("sage");
+							saddr = rs.getString("saddr");
+							stel = rs.getString("stel");
+							tnum = rs.getString("tnum");
+							tname = rs.getString("tname");
+							skor = rs.getInt("skor");
+							smat = rs.getInt("smat");
+							seng = rs.getInt("seng");
+							savg = rs.getInt("savg");
+
+							rank++;
+
+							ta.append("  " + rank + "\t\t" + snum + "\t\t" + sname + "\t\t" + sage + "\t\t" + saddr
+									+ "\t\t" + stel + "\t\t\t" + tnum + "\t\t" + tname + "\t\t" + skor + "\t\t" + smat
+									+ "\t\t" + seng + "\t\t" + savg + "\n");
+						}
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+
+				}
+			});
+		}
+
 		this.validate();
 	}
 
@@ -528,7 +614,7 @@ public class School extends Frame implements ActionListener {
 		conn = DriverManager.getConnection(url, user, pwd);
 
 		School s = new School();
-		s.setSize(1200, 400);
+		s.setSize(1300, 400);
 		s.setVisible(true);
 
 	}
