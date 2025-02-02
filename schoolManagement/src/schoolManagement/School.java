@@ -101,6 +101,7 @@ public class School extends Frame implements ActionListener {
 		mi_student.addActionListener(this);
 		mi_subject.addActionListener(this);
 		mi_classrank.addActionListener(this);
+		mi_allrank.addActionListener(this);
 
 	}
 
@@ -119,6 +120,8 @@ public class School extends Frame implements ActionListener {
 				subjectInput();
 			} else if (ob == mi_classrank) {
 				classRank();
+			} else if(ob==mi_allrank) {
+				allRank();
 			}
 
 		} catch (Exception e1) {
@@ -574,6 +577,70 @@ public class School extends Frame implements ActionListener {
 		}
 
 		this.validate();
+	}
+	
+	
+	public void allRank() throws Exception {
+		this.removeAll();
+		menu = "allRank";
+
+		this.setLayout(new BorderLayout());
+
+		p1 = new Panel(new FlowLayout());
+		this.add(p1, "North");
+		lb_title = new Label("전체 석차 출력", Label.CENTER);
+		lb_title.setPreferredSize(new Dimension(100, 50));
+		lb_title.setFont(f_title);
+		p1.add(lb_title);
+		p2 = new Panel();
+		ta = new TextArea();
+
+		ta.setPreferredSize(new Dimension(1250, 250));
+
+		list = new List();
+		p3 = new Panel(new GridLayout(1, 12));
+		p3.setPreferredSize(new Dimension(1250, 20));
+
+		for (int i = 0; i < 13; i++) {
+			Label lb = new Label(str[i]);
+			p3.add(lb);
+		}
+		
+		p2.add(p3);
+		p2.add(ta);
+		this.add(p2, "Center");
+		
+		int rank = 0;
+
+		sql = "select * from student st,subject sb,teacher t "
+				+ "where st.snum=sb.snum and st.tnum=t.tnum "
+				+ "order by savg desc";
+		
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ResultSet rs = ps.executeQuery();
+
+		while (rs.next()) {
+			snum = rs.getInt("snum");
+			sname = rs.getString("sname");
+			sage = rs.getInt("sage");
+			saddr = rs.getString("saddr");
+			stel = rs.getString("stel");
+			tnum = rs.getString("tnum");
+			tname = rs.getString("tname");
+			skor = rs.getInt("skor");
+			smat = rs.getInt("smat");
+			seng = rs.getInt("seng");
+			savg = rs.getInt("savg");
+
+			rank++;
+
+			ta.append("  " + rank + "\t\t" + snum + "\t\t" + sname + "\t\t" + sage + "\t\t" + saddr
+					+ "\t\t" + stel + "\t\t\t" + tnum + "\t\t" + tname + "\t\t" + skor + "\t\t" + smat
+					+ "\t\t" + seng + "\t\t" + savg + "\n");
+		}
+		
+		this.validate();
+		
 	}
 
 	public void popUp() {
